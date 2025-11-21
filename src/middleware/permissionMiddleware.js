@@ -101,6 +101,7 @@ function requirePermission(permissionName) {
       
       // 권한 값 확인 (boolean, number, string 모두 처리)
       const permissionValue = profileData[permissionName];
+      // null, undefined, 0, false, "0", "false"는 모두 false로 처리
       const hasPermission = permissionValue === true || permissionValue === 1 || permissionValue === "1" || permissionValue === "true";
       
       // 디버깅 로그 (권한 체크 시 항상 로그 출력)

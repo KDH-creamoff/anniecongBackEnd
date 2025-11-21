@@ -77,20 +77,24 @@ async function getMe(req, res) {
       });
     }
     
-    const profile = user.profile || user.UserProfile || {};
+    // Sequelize는 UserProfile을 UserProfile로 반환하므로 이를 확인
+    const profile = user.UserProfile || user.profile || {};
     
-    // 권한 정보 추출
+    // profile이 Sequelize 인스턴스인 경우 toJSON() 호출
+    const profileData = profile.toJSON ? profile.toJSON() : profile;
+    
+    // 권한 정보 추출 (profileData 사용)
     const permissions = {
-      can_basic_info: profile.can_basic_info === true || profile.can_basic_info === 1,
-      can_receiving: profile.can_receiving === true || profile.can_receiving === 1,
-      can_plant1_preprocess: profile.can_plant1_preprocess === true || profile.can_plant1_preprocess === 1,
-      can_plant_transfer: profile.can_plant_transfer === true || profile.can_plant_transfer === 1,
-      can_plant2_manufacture: profile.can_plant2_manufacture === true || profile.can_plant2_manufacture === 1,
-      can_shipping: profile.can_shipping === true || profile.can_shipping === 1,
-      can_label: profile.can_label === true || profile.can_label === 1,
-      can_inventory: profile.can_inventory === true || profile.can_inventory === 1,
-      can_quality: profile.can_quality === true || profile.can_quality === 1,
-      can_user_management: profile.can_user_management === true || profile.can_user_management === 1,
+      can_basic_info: profileData.can_basic_info === true || profileData.can_basic_info === 1 || profileData.can_basic_info === "1" || profileData.can_basic_info === "true",
+      can_receiving: profileData.can_receiving === true || profileData.can_receiving === 1 || profileData.can_receiving === "1" || profileData.can_receiving === "true",
+      can_plant1_preprocess: profileData.can_plant1_preprocess === true || profileData.can_plant1_preprocess === 1 || profileData.can_plant1_preprocess === "1" || profileData.can_plant1_preprocess === "true",
+      can_plant_transfer: profileData.can_plant_transfer === true || profileData.can_plant_transfer === 1 || profileData.can_plant_transfer === "1" || profileData.can_plant_transfer === "true",
+      can_plant2_manufacture: profileData.can_plant2_manufacture === true || profileData.can_plant2_manufacture === 1 || profileData.can_plant2_manufacture === "1" || profileData.can_plant2_manufacture === "true",
+      can_shipping: profileData.can_shipping === true || profileData.can_shipping === 1 || profileData.can_shipping === "1" || profileData.can_shipping === "true",
+      can_label: profileData.can_label === true || profileData.can_label === 1 || profileData.can_label === "1" || profileData.can_label === "true",
+      can_inventory: profileData.can_inventory === true || profileData.can_inventory === 1 || profileData.can_inventory === "1" || profileData.can_inventory === "true",
+      can_quality: profileData.can_quality === true || profileData.can_quality === 1 || profileData.can_quality === "1" || profileData.can_quality === "true",
+      can_user_management: profileData.can_user_management === true || profileData.can_user_management === 1 || profileData.can_user_management === "1" || profileData.can_user_management === "true",
     };
 
     // 프론트엔드 호환성을 위해 여러 형식으로 권한 정보 제공
@@ -100,27 +104,27 @@ async function getMe(req, res) {
       user: {
         id: user.id,
         profile: {
-          id: profile.id,
-          full_name: profile.full_name,
-          phone_number: profile.phone_number,
-          email: profile.email,
-          hire_date: profile.hire_date,
-          position: profile.position,
-          department: profile.department,
-          role: profile.role,
+          id: profileData.id,
+          full_name: profileData.full_name,
+          phone_number: profileData.phone_number,
+          email: profileData.email,
+          hire_date: profileData.hire_date,
+          position: profileData.position,
+          department: profileData.department,
+          role: profileData.role,
           // profile 내부에도 권한 정보 포함 (프론트엔드 호환성)
           permissions: permissions,
-          // 원본 권한 필드도 포함
-          can_basic_info: profile.can_basic_info === true || profile.can_basic_info === 1,
-          can_receiving: profile.can_receiving === true || profile.can_receiving === 1,
-          can_plant1_preprocess: profile.can_plant1_preprocess === true || profile.can_plant1_preprocess === 1,
-          can_plant_transfer: profile.can_plant_transfer === true || profile.can_plant_transfer === 1,
-          can_plant2_manufacture: profile.can_plant2_manufacture === true || profile.can_plant2_manufacture === 1,
-          can_shipping: profile.can_shipping === true || profile.can_shipping === 1,
-          can_label: profile.can_label === true || profile.can_label === 1,
-          can_inventory: profile.can_inventory === true || profile.can_inventory === 1,
-          can_quality: profile.can_quality === true || profile.can_quality === 1,
-          can_user_management: profile.can_user_management === true || profile.can_user_management === 1,
+          // 원본 권한 필드도 포함 (boolean으로 변환)
+          can_basic_info: permissions.can_basic_info,
+          can_receiving: permissions.can_receiving,
+          can_plant1_preprocess: permissions.can_plant1_preprocess,
+          can_plant_transfer: permissions.can_plant_transfer,
+          can_plant2_manufacture: permissions.can_plant2_manufacture,
+          can_shipping: permissions.can_shipping,
+          can_label: permissions.can_label,
+          can_inventory: permissions.can_inventory,
+          can_quality: permissions.can_quality,
+          can_user_management: permissions.can_user_management,
         },
         // user 레벨에도 권한 정보 포함
         permissions: permissions,
@@ -372,20 +376,24 @@ async function getMyPermissions(req, res) {
       });
     }
     
-    const profile = user.profile || user.UserProfile || {};
+    // Sequelize는 UserProfile을 UserProfile로 반환하므로 이를 확인
+    const profile = user.UserProfile || user.profile || {};
+    
+    // profile이 Sequelize 인스턴스인 경우 toJSON() 호출
+    const profileData = profile.toJSON ? profile.toJSON() : profile;
     
     // 권한 정보만 추출
     const permissions = {
-      can_basic_info: profile.can_basic_info === true || profile.can_basic_info === 1,
-      can_receiving: profile.can_receiving === true || profile.can_receiving === 1,
-      can_plant1_preprocess: profile.can_plant1_preprocess === true || profile.can_plant1_preprocess === 1,
-      can_plant_transfer: profile.can_plant_transfer === true || profile.can_plant_transfer === 1,
-      can_plant2_manufacture: profile.can_plant2_manufacture === true || profile.can_plant2_manufacture === 1,
-      can_shipping: profile.can_shipping === true || profile.can_shipping === 1,
-      can_label: profile.can_label === true || profile.can_label === 1,
-      can_inventory: profile.can_inventory === true || profile.can_inventory === 1,
-      can_quality: profile.can_quality === true || profile.can_quality === 1,
-      can_user_management: profile.can_user_management === true || profile.can_user_management === 1,
+      can_basic_info: profileData.can_basic_info === true || profileData.can_basic_info === 1 || profileData.can_basic_info === "1" || profileData.can_basic_info === "true",
+      can_receiving: profileData.can_receiving === true || profileData.can_receiving === 1 || profileData.can_receiving === "1" || profileData.can_receiving === "true",
+      can_plant1_preprocess: profileData.can_plant1_preprocess === true || profileData.can_plant1_preprocess === 1 || profileData.can_plant1_preprocess === "1" || profileData.can_plant1_preprocess === "true",
+      can_plant_transfer: profileData.can_plant_transfer === true || profileData.can_plant_transfer === 1 || profileData.can_plant_transfer === "1" || profileData.can_plant_transfer === "true",
+      can_plant2_manufacture: profileData.can_plant2_manufacture === true || profileData.can_plant2_manufacture === 1 || profileData.can_plant2_manufacture === "1" || profileData.can_plant2_manufacture === "true",
+      can_shipping: profileData.can_shipping === true || profileData.can_shipping === 1 || profileData.can_shipping === "1" || profileData.can_shipping === "true",
+      can_label: profileData.can_label === true || profileData.can_label === 1 || profileData.can_label === "1" || profileData.can_label === "true",
+      can_inventory: profileData.can_inventory === true || profileData.can_inventory === 1 || profileData.can_inventory === "1" || profileData.can_inventory === "true",
+      can_quality: profileData.can_quality === true || profileData.can_quality === 1 || profileData.can_quality === "1" || profileData.can_quality === "true",
+      can_user_management: profileData.can_user_management === true || profileData.can_user_management === 1 || profileData.can_user_management === "1" || profileData.can_user_management === "true",
     };
 
     res.json({ 
