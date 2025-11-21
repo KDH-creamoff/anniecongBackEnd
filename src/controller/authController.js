@@ -93,6 +93,7 @@ async function getMe(req, res) {
       can_user_management: profile.can_user_management === true || profile.can_user_management === 1,
     };
 
+    // 프론트엔드 호환성을 위해 여러 형식으로 권한 정보 제공
     res.json({ 
       ok: true,
       message: "사용자 정보 조회 성공", 
@@ -107,7 +108,21 @@ async function getMe(req, res) {
           position: profile.position,
           department: profile.department,
           role: profile.role,
+          // profile 내부에도 권한 정보 포함 (프론트엔드 호환성)
+          permissions: permissions,
+          // 원본 권한 필드도 포함
+          can_basic_info: profile.can_basic_info === true || profile.can_basic_info === 1,
+          can_receiving: profile.can_receiving === true || profile.can_receiving === 1,
+          can_plant1_preprocess: profile.can_plant1_preprocess === true || profile.can_plant1_preprocess === 1,
+          can_plant_transfer: profile.can_plant_transfer === true || profile.can_plant_transfer === 1,
+          can_plant2_manufacture: profile.can_plant2_manufacture === true || profile.can_plant2_manufacture === 1,
+          can_shipping: profile.can_shipping === true || profile.can_shipping === 1,
+          can_label: profile.can_label === true || profile.can_label === 1,
+          can_inventory: profile.can_inventory === true || profile.can_inventory === 1,
+          can_quality: profile.can_quality === true || profile.can_quality === 1,
+          can_user_management: profile.can_user_management === true || profile.can_user_management === 1,
         },
+        // user 레벨에도 권한 정보 포함
         permissions: permissions,
         // 권한 설명 매핑 (프론트엔드에서 사용 가능)
         permissionDescriptions: {

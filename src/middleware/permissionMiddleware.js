@@ -98,12 +98,28 @@ function requirePermission(permissionName) {
 
       // 권한 체크 (UserProfile의 권한 필드를 직접 체크)
       const profileData = userProfile.dataValues || userProfile;
-      const hasPermission = profileData[permissionName] === true || profileData[permissionName] === 1;
       
-      // 디버깅 로그
+      // 권한 값 확인 (boolean, number, string 모두 처리)
+      const permissionValue = profileData[permissionName];
+      const hasPermission = permissionValue === true || permissionValue === 1 || permissionValue === "1" || permissionValue === "true";
+      
+      // 디버깅 로그 (권한 체크 시 항상 로그 출력)
+      console.log(`[Permission] Checking permission: userId=${userId}, profileId=${profileData.id}, userName=${profileData.full_name}, permission=${permissionName}, value=${permissionValue} (type: ${typeof permissionValue}), hasPermission=${hasPermission}`);
+      
       if (!hasPermission) {
-        console.warn(`[Permission] Permission denied: userId=${userId}, profileId=${profileData.id}, userName=${profileData.full_name}, permission=${permissionName}, value=${profileData[permissionName]}`);
-        console.warn(`[Permission] UserProfile data:`, JSON.stringify(profileData, null, 2));
+        console.warn(`[Permission] Permission denied: userId=${userId}, profileId=${profileData.id}, userName=${profileData.full_name}, permission=${permissionName}, value=${permissionValue} (type: ${typeof permissionValue})`);
+        console.warn(`[Permission] All permissions:`, {
+          can_basic_info: profileData.can_basic_info,
+          can_receiving: profileData.can_receiving,
+          can_plant1_preprocess: profileData.can_plant1_preprocess,
+          can_plant_transfer: profileData.can_plant_transfer,
+          can_plant2_manufacture: profileData.can_plant2_manufacture,
+          can_shipping: profileData.can_shipping,
+          can_label: profileData.can_label,
+          can_inventory: profileData.can_inventory,
+          can_quality: profileData.can_quality,
+          can_user_management: profileData.can_user_management,
+        });
       }
 
       if (!hasPermission) {
