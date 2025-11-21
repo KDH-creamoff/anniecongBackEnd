@@ -41,11 +41,17 @@ app.use(
     secret: appConfig.session.secret,
     resave: false,
     saveUninitialized: false,
+    rolling: true, // 요청마다 세션 쿠키 갱신 (만료 시간 연장)
     cookie: {
       secure: appConfig.session.secure,
       httpOnly: appConfig.session.httpOnly,
       maxAge: appConfig.session.maxAge,
+      // CORS를 위한 sameSite 설정
+      // secure가 true면 'none', false면 'lax' (개발 환경에서는 'lax'가 더 안전)
+      sameSite: 'lax',
     },
+    // 세션 스토어 설정 (메모리 스토어 사용, 프로덕션에서는 Redis 등 사용 권장)
+    name: 'connect.sid', // 세션 쿠키 이름
   })
 );
 
